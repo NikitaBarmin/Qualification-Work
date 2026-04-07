@@ -1,0 +1,17 @@
+{
+	"apps/frontend/**/*.{ts,tsx}": [
+		"oxlint -c apps/frontend/oxlint.config.ts --fix",
+		"prettier --write"
+	],
+	"apps/backend/**/*.ts": [
+		"oxlint -c apps/backend/oxlint.config.ts --fix",
+		"prettier --write"
+	],
+	"packages/**/*.{ts,tsx}": [
+		"oxlint -c oxlint.config.ts --fix",
+		"prettier --write"
+	],
+	"*.{json,md,html}": [
+		"prettier --write"
+	]
+}
