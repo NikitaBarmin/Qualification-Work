@@ -1,27 +1,18 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"globalDependencies": [
-		"**/.env.*"
-	],
-	"tasks": {
-		"dev": {
-			"dependsOn": [
-				"^dev"
-			],
-			"cache": false,
-			"persistent": true
-		},
-		"build": {
-			"dependsOn": [
-				"^build"
-			],
-			"outputs": [
-				".next/**",
-				"dist/**"
-			]
-		},
-		"clean": {
-			"cache": false
-		}
-	}
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*"],
+  "tasks": {
+    "dev": {
+      "dependsOn": ["^dev"],
+      "cache": false,
+      "persistent": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
 }

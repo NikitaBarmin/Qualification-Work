@@ -25,3 +25,15 @@ playwright/.cache/
 # Системные файлы
 .DS_Store
 Thumbs.db
+
+# Покрытие тестов (coverage)
+coverage/
+apps/backend/coverage/
+apps/frontend/coverage/
+
+# Генерация документации
+docs/
+apps/backend/docs/
+
+# Заметки / черновики
+notes/
