@@ -1,39 +1,28 @@
-# Зависимости
 node_modules/
 .pnpm-debug.log*
 
-# Сборка
 dist/
 build/
+coverage/
 .turbo/
 
-# Секреты
 .env
+.env.local
 *.env.local
 
-# Логи
-*-logs
 *.log
 npm-debug.log*
 
-# Тесты (Playwright/Vitest)
 test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
 
-# Системные файлы
 .DS_Store
 Thumbs.db
 
-# Покрытие тестов (coverage)
-coverage/
-apps/backend/coverage/
-apps/frontend/coverage/
-
-# Генерация документации
 docs/
+notes/
 apps/backend/docs/
 
-# Заметки / черновики
-notes/
+.husky/_/
