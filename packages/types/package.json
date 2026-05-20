@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "node -e \"console.log('types placeholder build completed')\"",
+    "clean": "node -e \"console.log('types placeholder clean completed')\"",
+    "test": "node -e \"console.log('types placeholder test completed')\""
   },
   "keywords": [],
   "author": "",

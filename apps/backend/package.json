@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node -e \"console.log('backend placeholder is running'); setInterval(() => {}, 2147483647)\"",
+    "build": "node -e \"console.log('backend placeholder build completed')\"",
+    "clean": "node -e \"console.log('backend placeholder clean completed')\"",
+    "test": "node -e \"console.log('backend placeholder test completed')\""
   },
   "keywords": [],
   "author": "",
