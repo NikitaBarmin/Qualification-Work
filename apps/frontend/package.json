@@ -1,15 +1,31 @@
 {
   "name": "frontend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev": "node -e \"console.log('frontend placeholder is running'); setInterval(() => {}, 2147483647)\"",
-    "build": "node -e \"console.log('frontend placeholder build completed')\"",
-    "clean": "node -e \"console.log('frontend placeholder clean completed')\"",
-    "test": "node -e \"console.log('frontend placeholder test completed')\""
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "lint": "oxlint -c ../../oxlint.config.ts .",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true }); require('node:fs').rmSync('.turbo', { recursive: true, force: true });\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "antd": "^6.3.5",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@vitejs/plugin-react": "^6.0.1",
+    "prettier": "^3.8.1",
+    "sass": "^1.99.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.8"
+  }
 }
