@@ -1,5 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 
+import { AppFooter } from '@/widgets/app-footer';
 import { NavBar } from '@/widgets/nav-bar';
 
 import styles from './AppLayout.module.scss';
@@ -13,8 +14,11 @@ export function AppLayout() {
   if (isAuthRoute) {
     return (
       <main className={styles.authPage}>
-        <div className={styles.authContent}>
-          <Outlet />
+        <div className={styles.authShell}>
+          <div className={styles.authContent}>
+            <Outlet />
+          </div>
+          <AppFooter />
         </div>
       </main>
     );
@@ -26,6 +30,7 @@ export function AppLayout() {
       <main className={styles.main}>
         <div className={styles.content}>
           <Outlet />
+          <AppFooter />
         </div>
       </main>
     </div>

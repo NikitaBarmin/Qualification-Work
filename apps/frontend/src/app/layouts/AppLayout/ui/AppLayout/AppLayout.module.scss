@@ -24,8 +24,13 @@
   background: $bg-body;
 }
 
+.authShell {
+  width: min(100%, 760px);
+}
+
 .authContent {
   width: min(100%, 420px);
+  margin: 0 auto;
   padding: 40px;
   border: 1px solid rgb(47 51 52 / 8%);
   border-radius: 8px;

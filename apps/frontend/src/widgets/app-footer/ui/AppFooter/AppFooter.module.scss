@@ -1,0 +1,47 @@
+.footer {
+  padding: 28px 0 0;
+  border-top: 1px solid rgb(47 51 52 / 8%);
+  color: $color-gray;
+}
+
+.inner {
+  min-height: 56px;
+  column-gap: 28px;
+  row-gap: 14px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  color: $color-text;
+  font-family: $font-title;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.links {
+  flex: 1 1 auto;
+  min-width: 320px;
+  font-size: 13px;
+}
+
+.links a {
+  color: $color-gray;
+}
+
+.meta {
+  color: rgb(92 96 96 / 78%);
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .inner,
+  .links {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .links {
+    min-width: 0;
+    gap: 10px;
+  }
+}
