@@ -1,14 +1,18 @@
 {
-  "name": "constants",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@businesspulse/constants",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "node -e \"console.log('constants placeholder build completed')\"",
-    "clean": "node -e \"console.log('constants placeholder clean completed')\"",
-    "test": "node -e \"console.log('constants placeholder test completed')\""
+    "build": "tsc -p tsconfig.json",
+    "lint": "oxlint -c ../../oxlint.config.js .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node -e \"console.log('constants package has no runtime tests yet')\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true }); require('node:fs').rmSync('.turbo', { recursive: true, force: true });\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3"
+  }
 }

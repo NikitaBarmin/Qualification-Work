@@ -3,16 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@businesspulse/frontend --filter=@businesspulse/backend",
     "build": "turbo run build",
-    "clean": "turbo run clean"
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch --filter=@businesspulse/frontend --filter=@businesspulse/backend",
+    "test:coverage": "turbo run test:coverage",
+    "test:e2e": "pnpm --filter @businesspulse/frontend build && playwright test",
+    "clean": "turbo run clean",
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@playwright/test": "^1.59.1",
+    "@vitest/coverage-v8": "^4.1.4",
+    "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "oxlint": "^1.59.0",
     "prettier": "^3.8.1",
-    "turbo": "latest"
+    "turbo": "^2.5.8",
+    "vitest": "^4.1.4"
   },
   "packageManager": "pnpm@9.15.0",
   "engines": {

@@ -1,4 +1,4 @@
-import { Card, List, Space, Typography } from 'antd';
+import { Card, Space, Typography } from 'antd';
 
 import { NewAnalyticsDemo } from '@/features/new-analytics-demo/ui/NewAnalyticsDemo';
 import { SessionDemo } from '@/features/session-demo/ui/SessionDemo';
@@ -20,25 +20,19 @@ export function StateWorkbench() {
       <SessionDemo />
       <NewAnalyticsDemo />
 
-      <Card
-        className={styles.fullWidth}
-        title="Как устроено состояние"
-      >
-        <Space
-          direction="vertical"
-          size="middle"
-        >
+      <Card className={styles.fullWidth} title="Как устроено состояние">
+        <Space orientation="vertical" size="middle">
           <Typography.Paragraph>
-            Это стартовый каркас фронтенд-состояния под ваш MVP:
-            сессия пользователя, upload flow новой аналитики и
-            RTK Query-слой под backend.
+            Это стартовый каркас фронтенд-состояния под ваш MVP: сессия пользователя, upload flow
+            новой аналитики и RTK Query-слой под backend.
           </Typography.Paragraph>
-
-          <List
-            bordered
-            dataSource={stateLayers}
-            renderItem={(item) => <List.Item>{item}</List.Item>}
-          />
+          <Space orientation="vertical" size="small">
+            {stateLayers.map((item) => (
+              <Card key={item} size="small">
+                {item}
+              </Card>
+            ))}
+          </Space>
         </Space>
       </Card>
     </div>

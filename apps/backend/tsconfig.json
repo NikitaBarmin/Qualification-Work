@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "rootDir": ".",
+    "outDir": "dist",
+    "types": ["node"],
+    "lib": ["ES2023"],
+    "noEmit": false
+  },
+  "include": ["index.ts", "src/**/*.ts"],
+  "exclude": ["dist", "coverage", "node_modules", "test", "vitest.config.ts"]
+}

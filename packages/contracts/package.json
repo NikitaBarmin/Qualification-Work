@@ -1,5 +1,5 @@
 {
-  "name": "@businesspulse/utils",
+  "name": "@businesspulse/contracts",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -8,8 +8,8 @@
     "build": "tsc -p tsconfig.json",
     "lint": "oxlint -c ../../oxlint.config.js .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true }); require('node:fs').rmSync('.turbo', { recursive: true, force: true });\"",
-    "test": "node -e \"console.log('utils package has no runtime tests yet')\""
+    "test": "node -e \"console.log('contracts package has no runtime tests yet')\"",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true }); require('node:fs').rmSync('.turbo', { recursive: true, force: true });\""
   },
   "devDependencies": {
     "prettier": "^3.8.1",

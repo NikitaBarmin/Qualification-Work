@@ -1,9 +1,7 @@
 {
-  "apps/frontend/**/*.{ts,tsx}": [
-    "oxlint -c apps/frontend/oxlint.config.ts --fix",
-    "prettier --write"
+  "*.{js,cjs,mjs,ts,tsx}": [
+    "pnpm exec oxlint -c oxlint.config.js --fix",
+    "pnpm exec prettier --write"
   ],
-  "apps/backend/**/*.ts": ["oxlint -c apps/backend/oxlint.config.ts --fix", "prettier --write"],
-  "packages/**/*.{ts,tsx}": ["oxlint -c oxlint.config.ts --fix", "prettier --write"],
-  "*.{json,md,html}": ["prettier --write"]
+  "*.{json,md,scss,css,html,yml,yaml}": ["pnpm exec prettier --write"]
 }
