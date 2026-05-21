@@ -1,0 +1,45 @@
+@use './vars' as *;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Manrope:wght@200..800&display=swap');
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: $bg-body;
+  color: $color-text;
+  font-size: 16px;
+  font-family: $font-default;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: $color-text;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $color-accent;
+  }
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.none {
+  display: none !important;
+}
+
+.link-bold {
+  color: $color-accent;
+}
+
+.no-scroll {
+  overflow-y: hidden;
+}
