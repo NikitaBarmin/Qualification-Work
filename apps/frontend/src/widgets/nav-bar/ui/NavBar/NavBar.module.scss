@@ -1,0 +1,142 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 28px 18px;
+  border-right: 1px solid rgb(47 51 52 / 8%);
+  background: $bg-nav;
+}
+
+.brand {
+  padding: 0 10px;
+}
+
+.brandTitle {
+  color: $color-text;
+  font-family: $font-title;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.navigation {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.link {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: $color-text;
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    color 0.2s;
+
+  &:hover {
+    background: rgb(65 90 171 / 8%);
+    color: $color-accent;
+  }
+}
+
+.linkActive {
+  background: rgb(65 90 171 / 12%);
+  color: $color-accent;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.header {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  right: 0;
+  left: 264px;
+  min-height: 72px;
+  padding: 0 40px;
+  border-bottom: 1px solid rgb(47 51 52 / 8%);
+  background: rgb(250 249 249 / 92%);
+  backdrop-filter: blur(14px);
+}
+
+.pageTitle {
+  color: $color-text;
+  font-family: $font-title;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.authButton {
+  min-width: 96px;
+  min-height: 38px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    z-index: 20;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: auto;
+    min-height: 72px;
+    padding: 10px 12px;
+    border-top: 1px solid rgb(47 51 52 / 8%);
+    border-right: 0;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .navigation {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .link {
+    min-height: 52px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .header {
+    left: 0;
+    min-height: 72px;
+    padding: 0 20px;
+  }
+
+  .pageTitle {
+    font-size: 18px;
+  }
+
+  .authButton {
+    min-width: auto;
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+}

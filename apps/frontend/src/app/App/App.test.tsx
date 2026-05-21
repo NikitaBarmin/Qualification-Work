@@ -4,16 +4,17 @@ import { AppProviders } from '../providers';
 import { App } from './';
 
 describe('App', () => {
-  it('renders the state scaffold heading', async () => {
+  it('renders the main navigation layout', async () => {
     render(
       <AppProviders>
         <App />
       </AppProviders>,
     );
 
+    expect(await screen.findByLabelText('Основная навигация')).toBeInTheDocument();
     expect(
       await screen.findByRole('heading', {
-        name: 'РљР°СЂРєР°СЃ frontend-СЃРѕСЃС‚РѕСЏРЅРёСЏ',
+        name: 'Главная',
       }),
     ).toBeInTheDocument();
   });

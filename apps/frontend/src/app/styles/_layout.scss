@@ -1,0 +1,76 @@
+$display-values: block, inline, inline-block, flex, grid, none;
+$gap-values: (
+  2: 2px,
+  4: 4px,
+  6: 6px,
+  8: 8px,
+  10: 10px,
+  12: 12px,
+  16: 16px,
+  20: 20px,
+  24: 24px,
+  28: 28px,
+  32: 32px,
+);
+
+@each $value in $display-values {
+  [data-display='#{$value}'] {
+    display: $value;
+  }
+}
+
+[data-stack='h'] {
+  display: flex;
+  flex-direction: row;
+}
+
+[data-stack='v'] {
+  display: flex;
+  flex-direction: column;
+}
+
+[data-justify='start'] {
+  justify-content: flex-start;
+}
+
+[data-justify='center'] {
+  justify-content: center;
+}
+
+[data-justify='end'] {
+  justify-content: flex-end;
+}
+
+[data-justify='between'] {
+  justify-content: space-between;
+}
+
+[data-align='start'] {
+  align-items: flex-start;
+}
+
+[data-align='center'] {
+  align-items: center;
+}
+
+[data-align='end'] {
+  align-items: flex-end;
+}
+
+[data-align='stretch'] {
+  align-items: stretch;
+}
+
+[data-wrap='wrap'] {
+  flex-wrap: wrap;
+}
+
+[data-wrap='nowrap'] {
+  flex-wrap: nowrap;
+}
+
+@each $name, $value in $gap-values {
+  [data-gap='#{$name}'] {
+    gap: $value;
+  }
+}

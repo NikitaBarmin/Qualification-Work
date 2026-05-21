@@ -1,0 +1,48 @@
+.layout {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 264px minmax(0, 1fr);
+  background: $bg-body;
+}
+
+.main {
+  min-width: 0;
+  padding: 104px 40px 40px;
+}
+
+.content {
+  width: min(100%, 1180px);
+  min-height: calc(100vh - 144px);
+  margin: 0 auto;
+}
+
+.authPage {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px;
+  background: $bg-body;
+}
+
+.authContent {
+  width: min(100%, 420px);
+  padding: 40px;
+  border: 1px solid rgb(47 51 52 / 8%);
+  border-radius: 8px;
+  background: $bg-header;
+  box-shadow: 0 20px 60px rgb(47 51 52 / 8%);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 144px 20px 28px;
+  }
+
+  .content {
+    min-height: calc(100vh - 172px);
+  }
+}
