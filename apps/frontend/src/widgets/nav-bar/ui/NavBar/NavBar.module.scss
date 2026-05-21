@@ -85,6 +85,15 @@
   font-weight: 600;
 }
 
+.userEmail {
+  max-width: 220px;
+  overflow: hidden;
+  color: $color-gray;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 900px) {
   .sidebar {
     position: fixed;
@@ -138,5 +147,9 @@
     min-height: 34px;
     padding: 0 10px;
     font-size: 12px;
+  }
+
+  .userEmail {
+    display: none;
   }
 }

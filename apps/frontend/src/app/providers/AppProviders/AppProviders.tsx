@@ -2,6 +2,7 @@ import { App as AntdApp, ConfigProvider, theme } from 'antd';
 import type { PropsWithChildren } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
+import { SessionBootstrap } from '../session-bootstrap';
 import { StoreProvider } from '../store-provider';
 
 export function AppProviders({ children }: PropsWithChildren) {
@@ -22,7 +23,9 @@ export function AppProviders({ children }: PropsWithChildren) {
     >
       <AntdApp>
         <StoreProvider>
-          <BrowserRouter>{children}</BrowserRouter>
+          <BrowserRouter>
+            <SessionBootstrap>{children}</SessionBootstrap>
+          </BrowserRouter>
         </StoreProvider>
       </AntdApp>
     </ConfigProvider>

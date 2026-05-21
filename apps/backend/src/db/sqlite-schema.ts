@@ -5,7 +5,7 @@ export const SQLITE_SCHEMA_STATEMENTS = [
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
       business_type TEXT,
       created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
     );

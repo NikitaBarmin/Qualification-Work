@@ -5,6 +5,13 @@ import type {
 } from '@/entities/session/model/types/session';
 import { apiRoutes, baseApi, unwrapResponse } from '@/shared/api';
 
+import {
+  clearSession,
+  markSessionInitialized,
+  setAuthenticatedSession,
+  startGuestSession,
+} from '../model/slice/sessionSlice';
+
 export const sessionApi = baseApi.injectEndpoints({
   overrideExisting: false,
   endpoints: (builder) => ({
@@ -16,6 +23,22 @@ export const sessionApi = baseApi.injectEndpoints({
       providesTags: ['Session'],
       transformResponse: (response: ISessionUser | null | { data: ISessionUser | null }) =>
         unwrapResponse(response),
+      async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          if (data) {
+            dispatch(setAuthenticatedSession(data));
+            return;
+          }
+
+          dispatch(clearSession());
+        } catch {
+          dispatch(clearSession());
+        } finally {
+          dispatch(markSessionInitialized());
+        }
+      },
     }),
     login: builder.mutation<ISessionUser, ILoginPayload>({
       query: (body) => ({
@@ -26,6 +49,15 @@ export const sessionApi = baseApi.injectEndpoints({
       invalidatesTags: ['Session'],
       transformResponse: (response: ISessionUser | { data: ISessionUser }) =>
         unwrapResponse(response),
+      async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          dispatch(setAuthenticatedSession(data));
+        } catch {
+          // The page that started the mutation shows the actual error message.
+        }
+      },
     }),
     register: builder.mutation<ISessionUser, IRegisterPayload>({
       query: (body) => ({
@@ -36,6 +68,15 @@ export const sessionApi = baseApi.injectEndpoints({
       invalidatesTags: ['Session'],
       transformResponse: (response: ISessionUser | { data: ISessionUser }) =>
         unwrapResponse(response),
+      async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          dispatch(setAuthenticatedSession(data));
+        } catch {
+          // The page that started the mutation shows the actual error message.
+        }
+      },
     }),
     logout: builder.mutation<void, void>({
       query: () => ({
@@ -44,6 +85,13 @@ export const sessionApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Session'],
       transformResponse: () => undefined,
+      async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+        } finally {
+          dispatch(clearSession());
+        }
+      },
     }),
     startDemo: builder.mutation<ISessionUser | null, void>({
       query: () => ({
@@ -53,6 +101,10 @@ export const sessionApi = baseApi.injectEndpoints({
       invalidatesTags: ['Session'],
       transformResponse: (response: ISessionUser | null | { data: ISessionUser | null }) =>
         unwrapResponse(response),
+      async onQueryStarted(_argument, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        dispatch(startGuestSession());
+      },
     }),
   }),
 });

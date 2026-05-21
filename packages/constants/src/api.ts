@@ -6,7 +6,7 @@ export const API_ROUTES = {
     login: `${API_PREFIX}/auth/login`,
     register: `${API_PREFIX}/auth/register`,
     logout: `${API_PREFIX}/auth/logout`,
-    session: `${API_PREFIX}/auth/session`,
+    me: `${API_PREFIX}/auth/me`,
   },
   datasets: {
     list: `${API_PREFIX}/datasets`,

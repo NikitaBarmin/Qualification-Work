@@ -14,6 +14,17 @@ function createSqliteClient(): Database.Database {
   return client;
 }
 
+function migrateUsersPasswordColumn(client: Database.Database) {
+  const columns = client
+    .prepare('PRAGMA table_info(users)')
+    .all() as Array<{ name: string }>;
+  const columnNames = new Set(columns.map((column) => column.name));
+
+  if (columnNames.has('password') && !columnNames.has('password_hash')) {
+    client.exec('ALTER TABLE users RENAME COLUMN password TO password_hash');
+  }
+}
+
 export function getSqliteClient(): Database.Database {
   if (sqliteClient === null) {
     sqliteClient = createSqliteClient();
@@ -34,6 +45,7 @@ export function initializeSqlite(): ISqliteStatus {
   for (const statement of SQLITE_SCHEMA_STATEMENTS) {
     client.exec(statement);
   }
+  migrateUsersPasswordColumn(client);
 
   return {
     ready: true,

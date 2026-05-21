@@ -25,5 +25,6 @@ docs/
 notes/
 forCodex/
 apps/backend/docs/
+apps/backend/storage/
 
 .husky/_/
