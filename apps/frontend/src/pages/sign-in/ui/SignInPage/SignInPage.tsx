@@ -1,6 +1,6 @@
 import { Alert, Button, Input, Typography } from 'antd';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 
@@ -28,9 +28,10 @@ export function SignInPage() {
   const [login, { isLoading }] = useLoginMutation();
   const [formError, setFormError] = useState<string | null>(null);
   const {
+    clearErrors,
+    control,
     formState: { errors },
     handleSubmit,
-    register,
     setError,
   } = useForm<SignInFormValues>({
     defaultValues: {
@@ -41,6 +42,7 @@ export function SignInPage() {
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
+    clearErrors();
     const parsedValues = signInSchema.safeParse(values);
 
     if (!parsedValues.success) {
@@ -73,16 +75,40 @@ export function SignInPage() {
 
       <label className={styles.field} data-stack="v" data-gap="6">
         <span>Email</span>
-        <Input {...register('email')} autoComplete="email" placeholder="owner@company.ru" />
+        <Controller
+          control={control}
+          name="email"
+          render={({ field }) => (
+            <Input
+              {...field}
+              autoComplete="email"
+              placeholder="owner@company.ru"
+              onChange={(event) => {
+                field.onChange(event.target.value);
+                clearErrors('email');
+              }}
+            />
+          )}
+        />
         <span className={styles.error}>{errors.email?.message}</span>
       </label>
 
       <label className={styles.field} data-stack="v" data-gap="6">
         <span>Пароль</span>
-        <Input.Password
-          {...register('password')}
-          autoComplete="current-password"
-          placeholder="Введите пароль"
+        <Controller
+          control={control}
+          name="password"
+          render={({ field }) => (
+            <Input.Password
+              {...field}
+              autoComplete="current-password"
+              placeholder="Введите пароль"
+              onChange={(event) => {
+                field.onChange(event.target.value);
+                clearErrors('password');
+              }}
+            />
+          )}
         />
         <span className={styles.error}>{errors.password?.message}</span>
       </label>
