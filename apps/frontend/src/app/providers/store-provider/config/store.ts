@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 
-import { baseApi } from '@/shared/api/baseApi';
+import { baseApi } from '@/shared/api';
 
 import { rootReducer } from './rootReducer';
 
@@ -8,8 +8,7 @@ export function createReduxStore() {
   return configureStore({
     reducer: rootReducer,
     devTools: import.meta.env.DEV,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(baseApi.middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
   });
 }
 

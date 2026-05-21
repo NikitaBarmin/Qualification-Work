@@ -1,13 +1,10 @@
-import type { PropsWithChildren } from 'react';
-
 import { App as AntdApp, ConfigProvider, theme } from 'antd';
+import type { PropsWithChildren } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
-import { StoreProvider } from './store-provider/ui/StoreProvider';
+import { StoreProvider } from '../store-provider';
 
-export function AppProviders({
-  children,
-}: PropsWithChildren) {
+export function AppProviders({ children }: PropsWithChildren) {
   return (
     <ConfigProvider
       theme={{
@@ -19,8 +16,7 @@ export function AppProviders({
           colorBgLayout: '#F4F7FB',
           colorText: '#16202F',
           borderRadius: 16,
-          fontFamily:
-            'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         },
       }}
     >

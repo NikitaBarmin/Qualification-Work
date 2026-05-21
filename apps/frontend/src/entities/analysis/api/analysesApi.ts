@@ -3,10 +3,7 @@ import type {
   IAnalysisListItem,
   IRunAnalysisPayload,
 } from '@/entities/analysis/model/types/analysis';
-
-import { apiRoutes } from '@/shared/api/apiRoutes';
-import { baseApi } from '@/shared/api/baseApi';
-import { unwrapResponse } from '@/shared/api/unwrapResponse';
+import { apiRoutes, baseApi, unwrapResponse } from '@/shared/api';
 
 export const analysesApi = baseApi.injectEndpoints({
   overrideExisting: false,
@@ -17,9 +14,8 @@ export const analysesApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: ['Analysis'],
-      transformResponse: (
-        response: IAnalysisListItem[] | { data: IAnalysisListItem[] },
-      ) => unwrapResponse(response),
+      transformResponse: (response: IAnalysisListItem[] | { data: IAnalysisListItem[] }) =>
+        unwrapResponse(response),
     }),
     getAnalysisById: builder.query<IAnalysisDetails, string>({
       query: (analysisId) => ({
@@ -27,29 +23,21 @@ export const analysesApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: ['Analysis'],
-      transformResponse: (
-        response: IAnalysisDetails | { data: IAnalysisDetails },
-      ) => unwrapResponse(response),
+      transformResponse: (response: IAnalysisDetails | { data: IAnalysisDetails }) =>
+        unwrapResponse(response),
     }),
-    runAnalysis: builder.mutation<
-      IAnalysisDetails,
-      IRunAnalysisPayload
-    >({
+    runAnalysis: builder.mutation<IAnalysisDetails, IRunAnalysisPayload>({
       query: (body) => ({
         url: apiRoutes.analyses.run,
         method: 'POST',
         body,
       }),
       invalidatesTags: ['Analysis', 'Dataset'],
-      transformResponse: (
-        response: IAnalysisDetails | { data: IAnalysisDetails },
-      ) => unwrapResponse(response),
+      transformResponse: (response: IAnalysisDetails | { data: IAnalysisDetails }) =>
+        unwrapResponse(response),
     }),
   }),
 });
 
-export const {
-  useGetAnalysesListQuery,
-  useGetAnalysisByIdQuery,
-  useRunAnalysisMutation,
-} = analysesApi;
+export const { useGetAnalysesListQuery, useGetAnalysisByIdQuery, useRunAnalysisMutation } =
+  analysesApi;

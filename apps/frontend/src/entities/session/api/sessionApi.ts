@@ -3,10 +3,7 @@ import type {
   IRegisterPayload,
   ISessionUser,
 } from '@/entities/session/model/types/session';
-
-import { apiRoutes } from '@/shared/api/apiRoutes';
-import { baseApi } from '@/shared/api/baseApi';
-import { unwrapResponse } from '@/shared/api/unwrapResponse';
+import { apiRoutes, baseApi, unwrapResponse } from '@/shared/api';
 
 export const sessionApi = baseApi.injectEndpoints({
   overrideExisting: false,
@@ -17,9 +14,8 @@ export const sessionApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
       providesTags: ['Session'],
-      transformResponse: (
-        response: ISessionUser | null | { data: ISessionUser | null },
-      ) => unwrapResponse(response),
+      transformResponse: (response: ISessionUser | null | { data: ISessionUser | null }) =>
+        unwrapResponse(response),
     }),
     login: builder.mutation<ISessionUser, ILoginPayload>({
       query: (body) => ({
@@ -55,9 +51,8 @@ export const sessionApi = baseApi.injectEndpoints({
         method: 'POST',
       }),
       invalidatesTags: ['Session'],
-      transformResponse: (
-        response: ISessionUser | null | { data: ISessionUser | null },
-      ) => unwrapResponse(response),
+      transformResponse: (response: ISessionUser | null | { data: ISessionUser | null }) =>
+        unwrapResponse(response),
     }),
   }),
 });

@@ -5,9 +5,9 @@ import type { PropsWithChildren } from 'react';
 import styles from './ShellLayout.module.scss';
 
 const menuItems: MenuProps['items'] = [
-  { key: 'new-analysis', label: 'Новая аналитика' },
-  { key: 'datasets', label: 'Мои датасеты' },
-  { key: 'state', label: 'Каркас состояния' },
+  { key: 'new-analysis', label: 'РќРѕРІР°СЏ Р°РЅР°Р»РёС‚РёРєР°' },
+  { key: 'datasets', label: 'РњРѕРё РґР°С‚Р°СЃРµС‚С‹' },
+  { key: 'state', label: 'РљР°СЂРєР°СЃ СЃРѕСЃС‚РѕСЏРЅРёСЏ' },
 ];
 
 export function ShellLayout({ children }: PropsWithChildren) {
@@ -16,7 +16,9 @@ export function ShellLayout({ children }: PropsWithChildren) {
       <Layout.Sider width={280} className={styles.sider}>
         <div className={styles.brand}>
           <span className={styles.brandTitle}>BusinessPulse</span>
-          <span className={styles.brandCaption}>Спокойная BI-платформа для малого бизнеса</span>
+          <span className={styles.brandCaption}>
+            РЎРїРѕРєРѕР№РЅР°СЏ BI-РїР»Р°С‚С„РѕСЂРјР° РґР»СЏ РјР°Р»РѕРіРѕ Р±РёР·РЅРµСЃР°
+          </span>
         </div>
 
         <Menu theme="dark" mode="inline" selectedKeys={['state']} items={menuItems} />
