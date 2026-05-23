@@ -1,7 +1,7 @@
 import type {
   IAnalysisDetails,
   IAnalysisListItem,
-  IRunAnalysisPayload,
+  ICreateAnalysisPayload,
 } from '@/entities/analysis/model/types/analysis';
 import { apiRoutes, baseApi, unwrapResponse } from '@/shared/api';
 
@@ -26,9 +26,9 @@ export const analysesApi = baseApi.injectEndpoints({
       transformResponse: (response: IAnalysisDetails | { data: IAnalysisDetails }) =>
         unwrapResponse(response),
     }),
-    runAnalysis: builder.mutation<IAnalysisDetails, IRunAnalysisPayload>({
+    createAnalysis: builder.mutation<IAnalysisDetails, ICreateAnalysisPayload>({
       query: (body) => ({
-        url: apiRoutes.analyses.run,
+        url: apiRoutes.analyses.create,
         method: 'POST',
         body,
       }),
@@ -39,5 +39,5 @@ export const analysesApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetAnalysesListQuery, useGetAnalysisByIdQuery, useRunAnalysisMutation } =
+export const { useCreateAnalysisMutation, useGetAnalysesListQuery, useGetAnalysisByIdQuery } =
   analysesApi;

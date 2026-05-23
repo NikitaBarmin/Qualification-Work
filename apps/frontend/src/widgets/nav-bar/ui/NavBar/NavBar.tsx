@@ -40,7 +40,7 @@ const NAV_ITEMS: INavItem[] = [
   },
   {
     path: '/analytics/new',
-    label: 'Новая аналитика',
+    label: 'Новый анализ',
     icon: newAnalysisIcon,
   },
   {
@@ -127,7 +127,11 @@ export function NavBar() {
           {session.status === 'authenticated' ? (
             <>
               <span className={styles.userEmail}>{session.user?.email}</span>
-              <Button className={styles.authButton} loading={isLogoutLoading} onClick={handleLogout}>
+              <Button
+                className={styles.authButton}
+                loading={isLogoutLoading}
+                onClick={handleLogout}
+              >
                 Выйти
               </Button>
             </>

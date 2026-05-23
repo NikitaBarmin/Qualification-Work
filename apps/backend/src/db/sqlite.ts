@@ -53,6 +53,14 @@ function migrateUsersPasswordColumn(client: Database.Database) {
   }
 }
 
+function migrateUploadSessionsRowCount(client: Database.Database) {
+  const columnNames = getColumnNames(client, 'upload_sessions');
+
+  if (!columnNames.has('row_count')) {
+    client.exec('ALTER TABLE upload_sessions ADD COLUMN row_count INTEGER');
+  }
+}
+
 function migrateLegacyDatasetsTable(client: Database.Database) {
   if (!tableExists(client, 'datasets')) {
     return;
@@ -132,6 +140,7 @@ export function initializeSqlite(): ISqliteStatus {
   client.exec(CREATE_USERS_TABLE_SQL);
   migrateUsersPasswordColumn(client);
   client.exec(CREATE_UPLOAD_SESSIONS_TABLE_SQL);
+  migrateUploadSessionsRowCount(client);
   migrateLegacyAnalysesTable(client);
   client.exec(CREATE_DATASETS_TABLE_SQL);
   migrateLegacyDatasetsTable(client);

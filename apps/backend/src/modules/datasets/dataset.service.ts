@@ -3,17 +3,32 @@ import { findUploadSessionById, markUploadSessionMapped } from '../uploads/uploa
 import {
   createDatasetVersion,
   createDatasetWithVersion,
+  deleteDatasetById,
   findDatasetById,
+  findDatasetCurrentVersion,
+  findDatasetVersionById,
   getNextDatasetVersionNumber,
   listDatasetsByUser,
   listDatasetVersions,
 } from './dataset.repository.js';
-import type { DatasetColumnMapping } from './dataset.types.js';
+import type { DatasetColumnMapping, IDatasetVersionRecord } from './dataset.types.js';
 
-function ensureMapping(mapping: DatasetColumnMapping) {
-  if (!mapping || Object.keys(mapping).length === 0) {
-    throw new AppError('Необходимо сопоставить хотя бы одну колонку', 400);
+function toDatasetVersionView(version: IDatasetVersionRecord | null) {
+  if (!version) {
+    return null;
   }
+
+  return {
+    id: version.id,
+    datasetId: version.datasetId,
+    uploadSessionId: version.uploadSessionId,
+    versionNumber: version.versionNumber,
+    originalFilename: version.originalFilename,
+    status: version.status,
+    rowCount: version.rowCount,
+    createdAt: version.createdAt,
+    completedAt: version.completedAt,
+  };
 }
 
 function ensureUploadSessionForUser(uploadId: string, userId: string) {
@@ -31,7 +46,10 @@ function ensureUploadSessionForUser(uploadId: string, userId: string) {
 }
 
 export function listUserDatasets(userId: string) {
-  return listDatasetsByUser(userId);
+  return listDatasetsByUser(userId).map((dataset) => ({
+    ...dataset,
+    currentVersion: toDatasetVersionView(findDatasetCurrentVersion(dataset.id)),
+  }));
 }
 
 export function getUserDatasetDetails(datasetId: string, userId: string) {
@@ -43,7 +61,7 @@ export function getUserDatasetDetails(datasetId: string, userId: string) {
 
   return {
     ...dataset,
-    versions: listDatasetVersions(datasetId),
+    versions: listDatasetVersions(datasetId).map(toDatasetVersionView),
   };
 }
 
@@ -53,8 +71,6 @@ export function createUserDataset(input: {
   name: string;
   mapping: DatasetColumnMapping;
 }) {
-  ensureMapping(input.mapping);
-
   const uploadSession = ensureUploadSessionForUser(input.uploadId, input.userId);
   const result = createDatasetWithVersion({
     userId: input.userId,
@@ -62,6 +78,7 @@ export function createUserDataset(input: {
     uploadSessionId: uploadSession.id,
     originalFilename: uploadSession.originalFilename,
     originalFilePath: uploadSession.originalFilePath,
+    rowCount: uploadSession.rowCount,
     mappingConfig: input.mapping,
   });
 
@@ -79,8 +96,6 @@ export function createUserDatasetVersion(input: {
   uploadId: string;
   mapping: DatasetColumnMapping;
 }) {
-  ensureMapping(input.mapping);
-
   const dataset = findDatasetById(input.datasetId);
 
   if (!dataset || dataset.userId !== input.userId) {
@@ -95,10 +110,37 @@ export function createUserDatasetVersion(input: {
     versionNumber: getNextDatasetVersionNumber(dataset.id),
     originalFilename: uploadSession.originalFilename,
     originalFilePath: uploadSession.originalFilePath,
+    rowCount: uploadSession.rowCount,
     mappingConfig: input.mapping,
   });
 
   markUploadSessionMapped(uploadSession.id);
+
+  return version;
+}
+
+export function deleteUserDataset(datasetId: string, userId: string) {
+  const dataset = findDatasetById(datasetId);
+
+  if (!dataset || dataset.userId !== userId) {
+    throw new AppError('Датасет не найден', 404);
+  }
+
+  deleteDatasetById(dataset.id);
+}
+
+export function getUserDatasetDownload(datasetId: string, userId: string) {
+  const dataset = findDatasetById(datasetId);
+
+  if (!dataset || dataset.userId !== userId || !dataset.currentVersionId) {
+    throw new AppError('Датасет не найден', 404);
+  }
+
+  const version = findDatasetVersionById(dataset.currentVersionId);
+
+  if (!version) {
+    throw new AppError('Версия датасета не найдена', 404);
+  }
 
   return version;
 }

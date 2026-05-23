@@ -15,6 +15,7 @@ interface IUploadSessionRow {
   original_file_path: string;
   mime_type: string | null;
   file_size: number;
+  row_count: number | null;
   status: UploadSessionStatus;
   preview_rows_json: string | null;
   inferred_columns_json: string | null;
@@ -36,6 +37,7 @@ function mapUploadSession(row: IUploadSessionRow): IUploadSessionRecord {
     originalFilePath: row.original_file_path,
     mimeType: row.mime_type,
     fileSize: row.file_size,
+    rowCount: row.row_count,
     status: row.status,
     previewRows: parseJson<Record<string, unknown>[]>(row.preview_rows_json),
     inferredColumns: parseJson<IPreviewColumn[]>(row.inferred_columns_json),
@@ -66,10 +68,11 @@ export function createUploadSession(input: {
           original_file_path,
           mime_type,
           file_size,
+          row_count,
           status,
           expires_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, 'uploaded', ?)
+        VALUES (?, ?, ?, ?, ?, ?, NULL, 'uploaded', ?)
       `,
     )
     .run(
@@ -102,6 +105,7 @@ export function findUploadSessionById(uploadSessionId: string): IUploadSessionRe
           original_file_path,
           mime_type,
           file_size,
+          row_count,
           status,
           preview_rows_json,
           inferred_columns_json,
@@ -123,6 +127,7 @@ export function updateUploadSessionPreview(input: {
   previewRows: Record<string, unknown>[];
   inferredColumns: IPreviewColumn[];
   autoMapping: Partial<Record<DatasetColumnKey, string>>;
+  rowCount: number;
 }): IUploadSessionRecord {
   getSqliteClient()
     .prepare(
@@ -130,6 +135,7 @@ export function updateUploadSessionPreview(input: {
         UPDATE upload_sessions
         SET
           status = 'previewed',
+          row_count = ?,
           preview_rows_json = ?,
           inferred_columns_json = ?,
           auto_mapping_json = ?
@@ -137,6 +143,7 @@ export function updateUploadSessionPreview(input: {
       `,
     )
     .run(
+      input.rowCount,
       JSON.stringify(input.previewRows),
       JSON.stringify(input.inferredColumns),
       JSON.stringify(input.autoMapping),

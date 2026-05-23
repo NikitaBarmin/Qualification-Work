@@ -56,38 +56,44 @@ async function readCsvPreview(filePath: string) {
   });
   let headers: string[] = [];
   const previewRows: Record<string, string | number | null>[] = [];
+  let rowCount = 0;
 
   for await (const line of lines) {
+    if (line.trim() === '') {
+      continue;
+    }
+
     if (headers.length === 0) {
       headers = parseCsvLine(line).map((header) => header.trim());
       continue;
     }
 
+    rowCount += 1;
     const cells = parseCsvLine(line);
-    const row = Object.fromEntries(
-      headers.map((header, index) => [header, cells[index] === '' ? null : (cells[index] ?? null)]),
-    );
-    previewRows.push(row);
 
-    if (previewRows.length >= PREVIEW_ROW_LIMIT) {
-      break;
+    if (previewRows.length < PREVIEW_ROW_LIMIT) {
+      const row = Object.fromEntries(
+        headers.map((header, index) => [
+          header,
+          cells[index] === '' ? null : (cells[index] ?? null),
+        ]),
+      );
+      previewRows.push(row);
     }
   }
 
   lines.close();
   stream.destroy();
 
-  return { headers, previewRows };
+  return { headers, previewRows, rowCount };
 }
 
 function readExcelPreview(filePath: string) {
-  const workbook = xlsx.readFile(filePath, {
-    sheetRows: PREVIEW_ROW_LIMIT + 1,
-  });
+  const workbook = xlsx.readFile(filePath);
   const [sheetName] = workbook.SheetNames;
 
   if (!sheetName) {
-    return { headers: [], previewRows: [] };
+    return { headers: [], previewRows: [], rowCount: 0 };
   }
 
   const rows = xlsx.utils.sheet_to_json<Record<string, string | number | null>>(
@@ -102,6 +108,7 @@ function readExcelPreview(filePath: string) {
   return {
     headers,
     previewRows: rows.slice(0, PREVIEW_ROW_LIMIT),
+    rowCount: rows.length,
   };
 }
 
@@ -196,12 +203,14 @@ export async function createUploadPreview(input: {
     previewRows: preview.previewRows,
     inferredColumns,
     autoMapping,
+    rowCount: preview.rowCount,
   });
 
   return {
     uploadId: updatedSession.id,
     filename: updatedSession.originalFilename,
     fileSize: updatedSession.fileSize,
+    rowCount: updatedSession.rowCount,
     columns: inferredColumns,
     previewRows: preview.previewRows,
     autoMapping,

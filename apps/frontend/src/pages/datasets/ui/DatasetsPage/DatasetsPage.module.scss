@@ -1,0 +1,253 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  color: $color-text;
+}
+
+.header {
+  gap: 24px;
+}
+
+.titleGroup {
+  max-width: 720px;
+
+  h1 {
+    margin: 0 0 6px;
+    color: $color-text;
+    font-family: $font-title;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  p {
+    margin: 0;
+    color: $color-gray;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+}
+
+.uploadButton {
+  min-width: 230px;
+  min-height: 48px;
+  border-radius: 8px;
+  background: $bg-buttons;
+  box-shadow: 0 12px 24px rgb(65 90 171 / 18%);
+  font-weight: 700;
+}
+
+.tablePanel {
+  overflow: hidden;
+  border: 1px solid rgb(47 51 52 / 6%);
+  border-radius: 8px;
+  background: $bg-header;
+  box-shadow: 0 20px 50px rgb(47 51 52 / 5%);
+
+  :global(.ant-table) {
+    background: transparent;
+  }
+
+  :global(.ant-table-thead > tr > th) {
+    border-bottom: 0;
+    background: #f4f3f3;
+    color: $color-gray;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  :global(.ant-table-tbody > tr > td) {
+    border-bottom: 1px solid rgb(47 51 52 / 5%);
+    color: $color-text;
+    font-size: 14px;
+  }
+
+  :global(.ant-table-tbody > tr:hover > td) {
+    background: rgb(65 90 171 / 4%);
+  }
+}
+
+.fileCell {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+
+  img {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+  }
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.openButton {
+  padding: 0 8px;
+  color: $color-accent;
+  font-weight: 700;
+}
+
+.iconButton {
+  width: 32px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0;
+
+  img {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.tableFooter {
+  gap: 16px;
+  padding: 16px 24px 18px;
+  color: $color-gray;
+  font-size: 13px;
+}
+
+.pagination {
+  gap: 8px;
+
+  button {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    padding: 0;
+    color: $color-text;
+  }
+}
+
+.pipelinePanel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 34px;
+  border-radius: 8px;
+  background: linear-gradient(110deg, rgb(224 227 227 / 90%), rgb(244 243 243 / 96%)), $bg-gray;
+
+  h2 {
+    margin: 0 0 8px;
+    font-family: $font-title;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  p {
+    max-width: 670px;
+    margin: 0;
+    color: $color-gray;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+}
+
+.stats {
+  flex: 0 0 auto;
+  gap: 12px;
+
+  div {
+    min-width: 104px;
+    padding: 16px 18px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 72%);
+  }
+
+  strong {
+    display: block;
+    color: $color-text;
+    font-family: $font-title;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  span {
+    display: block;
+    margin-top: 7px;
+    color: $color-gray;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+}
+
+.dropZone {
+  padding: 20px 0;
+  text-align: center;
+
+  p {
+    margin: 12px 0 4px;
+    color: $color-text;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  span {
+    color: $color-gray;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+}
+
+.dropIcon {
+  display: inline-grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 50%;
+  background: $bg-header;
+  box-shadow: 0 10px 26px rgb(47 51 52 / 12%);
+  color: $color-accent;
+  font-size: 28px;
+}
+
+.mappingHint {
+  margin-top: 16px;
+}
+
+@media (max-width: 760px) {
+  .header,
+  .pipelinePanel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .titleGroup h1 {
+    font-size: 30px;
+  }
+
+  .uploadButton {
+    width: 100%;
+  }
+
+  .tablePanel {
+    overflow-x: auto;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+  }
+
+  .stats div {
+    flex: 1 1 140px;
+  }
+}

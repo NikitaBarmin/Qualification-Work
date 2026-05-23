@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AppLayout } from '@/app/layouts';
+import { DatasetsPage } from '@/pages/datasets';
 import { HomePage } from '@/pages/home';
 import { HowItWorksPage } from '@/pages/how-it-works';
 import { SignInPage } from '@/pages/sign-in';
@@ -41,7 +42,7 @@ export function AppRouter() {
       <Route element={<AppLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/how-it-works" element={<HowItWorksPage />} />
-        <Route path="/datasets" element={<RouteStub title="Мои датасеты" />} />
+        <Route path="/datasets" element={<DatasetsPage />} />
         <Route path="/analytics/new" element={<RouteStub title="Новая аналитика" />} />
         <Route path="/analytics" element={<RouteStub title="Аналитика" />} />
         <Route path="/settings" element={<RouteStub title="Настройки" />} />

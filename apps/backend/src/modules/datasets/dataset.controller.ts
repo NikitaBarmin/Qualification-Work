@@ -5,7 +5,9 @@ import { createDatasetSchema, createDatasetVersionSchema } from './dataset.schem
 import {
   createUserDataset,
   createUserDatasetVersion,
+  deleteUserDataset,
   getUserDatasetDetails,
+  getUserDatasetDownload,
   listUserDatasets,
 } from './dataset.service.js';
 
@@ -30,6 +32,17 @@ export const getDatasetDetailsController: RequestHandler = (request, response, n
     response.status(200).json({
       data: getUserDatasetDetails(getRouteParam(request.params.datasetId), user.id),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const downloadDatasetController: RequestHandler = (request, response, next) => {
+  try {
+    const user = getAuthenticatedUser(request);
+    const version = getUserDatasetDownload(getRouteParam(request.params.datasetId), user.id);
+
+    response.download(version.originalFilePath, version.originalFilename);
   } catch (error) {
     next(error);
   }
@@ -66,6 +79,17 @@ export const createDatasetVersionController: RequestHandler = (request, response
         mapping: payload.mapping,
       }),
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteDatasetController: RequestHandler = (request, response, next) => {
+  try {
+    const user = getAuthenticatedUser(request);
+
+    deleteUserDataset(getRouteParam(request.params.datasetId), user.id);
+    response.status(204).send();
   } catch (error) {
     next(error);
   }

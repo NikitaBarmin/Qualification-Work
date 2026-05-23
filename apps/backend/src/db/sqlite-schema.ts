@@ -25,6 +25,7 @@ export const CREATE_UPLOAD_SESSIONS_TABLE_SQL = `
     original_file_path TEXT NOT NULL,
     mime_type TEXT,
     file_size INTEGER NOT NULL,
+    row_count INTEGER,
     status TEXT NOT NULL CHECK (status IN ('uploaded', 'previewed', 'mapped', 'expired', 'failed')),
     preview_rows_json TEXT,
     inferred_columns_json TEXT,

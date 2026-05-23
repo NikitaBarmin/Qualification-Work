@@ -9,7 +9,7 @@ const mappingRuleSchema = z.object({
 export const createDatasetSchema = z.object({
   uploadId: z.string().min(1),
   name: z.string().min(1).max(120),
-  mapping: z.record(
+  mapping: z.partialRecord(
     z.enum([
       'date',
       'channel',

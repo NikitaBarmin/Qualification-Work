@@ -87,6 +87,16 @@ export function listDatasetsByUser(userId: string): IDatasetRecord[] {
   return rows.map(mapDataset);
 }
 
+export function findDatasetCurrentVersion(datasetId: string): IDatasetVersionRecord | null {
+  const dataset = findDatasetById(datasetId);
+
+  if (!dataset?.currentVersionId) {
+    return null;
+  }
+
+  return findDatasetVersionById(dataset.currentVersionId);
+}
+
 export function findDatasetById(datasetId: string): IDatasetRecord | null {
   const row = getSqliteClient()
     .prepare(
@@ -182,6 +192,7 @@ export function createDatasetWithVersion(input: {
   uploadSessionId: string;
   originalFilename: string;
   originalFilePath: string;
+  rowCount: number | null;
   mappingConfig: DatasetColumnMapping;
 }) {
   const datasetId = randomUUID();
@@ -209,10 +220,11 @@ export function createDatasetWithVersion(input: {
               version_number,
               original_filename,
               original_file_path,
+              row_count,
               mapping_config_json,
               status
             )
-            VALUES (?, ?, ?, ?, 1, ?, ?, ?, 'draft')
+            VALUES (?, ?, ?, ?, 1, ?, ?, ?, ?, 'draft')
           `,
       )
       .run(
@@ -222,6 +234,7 @@ export function createDatasetWithVersion(input: {
         input.uploadSessionId,
         input.originalFilename,
         input.originalFilePath,
+        input.rowCount,
         JSON.stringify(input.mappingConfig),
       );
 
@@ -249,6 +262,7 @@ export function createDatasetVersion(input: {
   versionNumber: number;
   originalFilename: string;
   originalFilePath: string;
+  rowCount: number | null;
   mappingConfig: DatasetColumnMapping;
 }): IDatasetVersionRecord {
   const versionId = randomUUID();
@@ -266,10 +280,11 @@ export function createDatasetVersion(input: {
               version_number,
               original_filename,
               original_file_path,
+              row_count,
               mapping_config_json,
               status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft')
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft')
           `,
       )
       .run(
@@ -280,6 +295,7 @@ export function createDatasetVersion(input: {
         input.versionNumber,
         input.originalFilename,
         input.originalFilePath,
+        input.rowCount,
         JSON.stringify(input.mappingConfig),
       );
 
@@ -301,4 +317,15 @@ export function createDatasetVersion(input: {
   }
 
   return createdVersion;
+}
+
+export function deleteDatasetById(datasetId: string) {
+  getSqliteClient()
+    .prepare(
+      `
+        DELETE FROM datasets
+        WHERE id = ?
+      `,
+    )
+    .run(datasetId);
 }

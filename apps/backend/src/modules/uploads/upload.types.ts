@@ -24,6 +24,7 @@ export interface IUploadSessionRecord {
   originalFilePath: string;
   mimeType: string | null;
   fileSize: number;
+  rowCount: number | null;
   status: UploadSessionStatus;
   previewRows: Record<string, unknown>[] | null;
   inferredColumns: IPreviewColumn[] | null;

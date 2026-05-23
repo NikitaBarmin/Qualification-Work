@@ -37,6 +37,7 @@ export interface IUploadPreviewResponse {
   uploadId: string;
   filename: string;
   fileSize: number;
+  rowCount: number | null;
   columns: IDatasetPreviewColumn[];
   previewRows: Record<string, DatasetCellValue>[];
   autoMapping: Partial<Record<DatasetColumnKey, string>>;
@@ -81,6 +82,7 @@ export interface IDatasetListItem {
   id: string;
   name: string;
   currentVersionId: string | null;
+  currentVersion?: IDatasetVersion | null;
   createdAt: string;
   updatedAt: string;
 }

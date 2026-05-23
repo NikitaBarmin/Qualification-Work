@@ -6,13 +6,19 @@ export const apiRoutes = {
     logout: '/auth/logout',
     demo: '/auth/demo',
   },
+  uploads: {
+    preview: '/uploads/preview',
+  },
   datasets: {
-    preview: '/datasets/preview',
-    draft: '/datasets/draft',
+    list: '/datasets',
+    create: '/datasets',
+    details: (datasetId: string) => `/datasets/${datasetId}`,
+    download: (datasetId: string) => `/datasets/${datasetId}/download`,
+    versions: (datasetId: string) => `/datasets/${datasetId}/versions`,
   },
   analyses: {
     list: '/analyses',
     details: (analysisId: string) => `/analyses/${analysisId}`,
-    run: '/analyses/run',
+    create: '/analyses',
   },
 } as const;

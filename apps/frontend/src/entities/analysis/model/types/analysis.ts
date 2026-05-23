@@ -1,8 +1,4 @@
-export type AnalysisStatus =
-  | 'processing'
-  | 'completed'
-  | 'partial_success'
-  | 'failed';
+export type AnalysisStatus = 'queued' | 'processing' | 'completed' | 'partial_success' | 'failed';
 
 export interface IAnalysisMetric {
   id: string;
@@ -13,18 +9,25 @@ export interface IAnalysisMetric {
 
 export interface IAnalysisListItem {
   id: string;
+  userId: string;
   datasetId: string;
+  datasetVersionId: string;
   title: string;
   status: AnalysisStatus;
   createdAt: string;
+  completedAt: string | null;
 }
 
 export interface IAnalysisDetails extends IAnalysisListItem {
-  metrics: IAnalysisMetric[];
-  swot?: string[];
-  aiRecommendations?: string[];
+  kpiMetrics: Record<string, unknown> | null;
+  diagnostics: Record<string, unknown> | null;
+  recommendations: Record<string, unknown> | null;
+  swot: Record<string, unknown> | null;
+  chartsConfig: Record<string, unknown> | null;
 }
 
-export interface IRunAnalysisPayload {
+export interface ICreateAnalysisPayload {
   datasetId: string;
+  datasetVersionId: string;
+  title?: string;
 }
