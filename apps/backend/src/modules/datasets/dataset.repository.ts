@@ -27,6 +27,7 @@ interface IDatasetVersionRow {
   original_file_path: string;
   cleaned_file_path: string | null;
   mapping_config_json: string;
+  edit_patch_json: string | null;
   schema_json: string | null;
   data_quality_json: string | null;
   row_count: number | null;
@@ -62,6 +63,7 @@ function mapDatasetVersion(row: IDatasetVersionRow): IDatasetVersionRecord {
     originalFilePath: row.original_file_path,
     cleanedFilePath: row.cleaned_file_path,
     mappingConfig: JSON.parse(row.mapping_config_json) as DatasetColumnMapping,
+    editPatch: parseJson(row.edit_patch_json),
     schema: parseJson<Record<string, unknown>>(row.schema_json),
     dataQuality: parseJson<Record<string, unknown>>(row.data_quality_json),
     rowCount: row.row_count,
@@ -125,6 +127,7 @@ export function findDatasetVersionById(datasetVersionId: string): IDatasetVersio
           original_file_path,
           cleaned_file_path,
           mapping_config_json,
+          edit_patch_json,
           schema_json,
           data_quality_json,
           row_count,
@@ -155,6 +158,7 @@ export function listDatasetVersions(datasetId: string): IDatasetVersionRecord[] 
           original_file_path,
           cleaned_file_path,
           mapping_config_json,
+          edit_patch_json,
           schema_json,
           data_quality_json,
           row_count,
@@ -328,4 +332,34 @@ export function deleteDatasetById(datasetId: string) {
       `,
     )
     .run(datasetId);
+}
+
+export function updateDatasetVersionDraft(input: {
+  datasetVersionId: string;
+  mappingConfig: DatasetColumnMapping;
+  editPatch: Record<string, unknown> | null;
+}): IDatasetVersionRecord {
+  getSqliteClient()
+    .prepare(
+      `
+        UPDATE dataset_versions
+        SET
+          mapping_config_json = ?,
+          edit_patch_json = ?
+        WHERE id = ?
+      `,
+    )
+    .run(
+      JSON.stringify(input.mappingConfig),
+      input.editPatch ? JSON.stringify(input.editPatch) : null,
+      input.datasetVersionId,
+    );
+
+  const updatedVersion = findDatasetVersionById(input.datasetVersionId);
+
+  if (!updatedVersion) {
+    throw new Error('Updated dataset version was not found');
+  }
+
+  return updatedVersion;
 }

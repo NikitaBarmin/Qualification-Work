@@ -60,6 +60,7 @@ export const CREATE_DATASET_VERSIONS_TABLE_SQL = `
     original_file_path TEXT NOT NULL,
     cleaned_file_path TEXT,
     mapping_config_json TEXT NOT NULL,
+    edit_patch_json TEXT,
     schema_json TEXT,
     data_quality_json TEXT,
     row_count INTEGER,

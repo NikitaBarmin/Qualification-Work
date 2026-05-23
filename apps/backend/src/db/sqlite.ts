@@ -61,6 +61,14 @@ function migrateUploadSessionsRowCount(client: Database.Database) {
   }
 }
 
+function migrateDatasetVersionsEditPatch(client: Database.Database) {
+  const columnNames = getColumnNames(client, 'dataset_versions');
+
+  if (!columnNames.has('edit_patch_json')) {
+    client.exec('ALTER TABLE dataset_versions ADD COLUMN edit_patch_json TEXT');
+  }
+}
+
 function migrateLegacyDatasetsTable(client: Database.Database) {
   if (!tableExists(client, 'datasets')) {
     return;
@@ -145,6 +153,7 @@ export function initializeSqlite(): ISqliteStatus {
   client.exec(CREATE_DATASETS_TABLE_SQL);
   migrateLegacyDatasetsTable(client);
   client.exec(CREATE_DATASET_VERSIONS_TABLE_SQL);
+  migrateDatasetVersionsEditPatch(client);
   client.exec(CREATE_ANALYSES_TABLE_SQL);
   client.exec(CREATE_ANALYSIS_EVENTS_TABLE_SQL);
 

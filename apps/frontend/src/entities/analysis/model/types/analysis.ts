@@ -27,7 +27,5 @@ export interface IAnalysisDetails extends IAnalysisListItem {
 }
 
 export interface ICreateAnalysisPayload {
-  datasetId: string;
   datasetVersionId: string;
-  title?: string;
 }

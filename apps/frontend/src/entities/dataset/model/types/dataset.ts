@@ -56,6 +56,23 @@ export interface IDatasetVersion {
   completedAt: string | null;
 }
 
+export interface IDatasetEditPatch {
+  updatedRows: Array<{
+    rowIndex: number;
+    values: Record<string, DatasetCellValue>;
+  }>;
+  addedRows: Array<Record<string, DatasetCellValue>>;
+  deletedRows: number[];
+}
+
+export interface IDatasetDraftVersion extends IDatasetVersion {
+  mappingConfig: DatasetColumnMapping;
+  editPatch: IDatasetEditPatch | null;
+  previewRows: Record<string, DatasetCellValue>[];
+  inferredColumns: IDatasetPreviewColumn[];
+  autoMapping: Partial<Record<DatasetColumnKey, string>>;
+}
+
 export interface IDatasetListItem {
   id: string;
   name: string;
@@ -66,6 +83,7 @@ export interface IDatasetListItem {
 }
 
 export interface IDatasetDetails extends Omit<IDatasetListItem, 'currentVersion'> {
+  currentVersion: IDatasetDraftVersion | null;
   versions: IDatasetVersion[];
 }
 
@@ -77,4 +95,11 @@ export interface ICreateDatasetPayload {
   uploadId: string;
   name: string;
   mapping: DatasetColumnMapping;
+}
+
+export interface IUpdateDatasetDraftPayload {
+  datasetId: string;
+  versionId: string;
+  mapping: DatasetColumnMapping;
+  editPatch: IDatasetEditPatch | null;
 }

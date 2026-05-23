@@ -8,6 +8,7 @@ import {
   downloadDatasetController,
   getDatasetDetailsController,
   listDatasetsController,
+  updateDatasetDraftController,
 } from './dataset.controller.js';
 
 export const datasetRouter: ExpressRouter = Router();
@@ -18,3 +19,8 @@ datasetRouter.get('/:datasetId/download', requireSession, downloadDatasetControl
 datasetRouter.get('/:datasetId', requireSession, getDatasetDetailsController);
 datasetRouter.delete('/:datasetId', requireSession, deleteDatasetController);
 datasetRouter.post('/:datasetId/versions', requireSession, createDatasetVersionController);
+datasetRouter.patch(
+  '/:datasetId/versions/:versionId/draft',
+  requireSession,
+  updateDatasetDraftController,
+);

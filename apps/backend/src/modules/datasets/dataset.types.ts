@@ -10,6 +10,15 @@ export interface IDatasetColumnMappingRule {
 
 export type DatasetColumnMapping = Partial<Record<DatasetColumnKey, IDatasetColumnMappingRule>>;
 
+export interface IDatasetEditPatch {
+  updatedRows: Array<{
+    rowIndex: number;
+    values: Record<string, unknown>;
+  }>;
+  addedRows: Record<string, unknown>[];
+  deletedRows: number[];
+}
+
 export interface IDatasetRecord {
   id: string;
   userId: string;
@@ -29,6 +38,7 @@ export interface IDatasetVersionRecord {
   originalFilePath: string;
   cleanedFilePath: string | null;
   mappingConfig: DatasetColumnMapping;
+  editPatch: IDatasetEditPatch | null;
   schema: Record<string, unknown> | null;
   dataQuality: Record<string, unknown> | null;
   rowCount: number | null;

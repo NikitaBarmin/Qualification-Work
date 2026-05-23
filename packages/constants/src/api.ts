@@ -16,6 +16,8 @@ export const API_ROUTES = {
     byId: (datasetId: string) => `${API_PREFIX}/datasets/${datasetId}`,
     download: (datasetId: string) => `${API_PREFIX}/datasets/${datasetId}/download`,
     versions: (datasetId: string) => `${API_PREFIX}/datasets/${datasetId}/versions`,
+    draft: (datasetId: string, versionId: string) =>
+      `${API_PREFIX}/datasets/${datasetId}/versions/${versionId}/draft`,
   },
   analyses: {
     list: `${API_PREFIX}/analyses`,

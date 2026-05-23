@@ -1,8 +1,10 @@
 import type {
   ICreateDatasetPayload,
   IDatasetDetails,
+  IDatasetDraftVersion,
   IDatasetListItem,
   IPreviewUploadPayload,
+  IUpdateDatasetDraftPayload,
   IUploadPreviewResponse,
 } from '@/entities/dataset/model/types/dataset';
 import { apiRoutes, baseApi, unwrapResponse } from '@/shared/api';
@@ -43,7 +45,7 @@ export const datasetsApi = baseApi.injectEndpoints({
         unwrapResponse(response),
     }),
     createDataset: builder.mutation<
-      { dataset: IDatasetListItem; version: unknown },
+      { dataset: IDatasetListItem; version: IDatasetDraftVersion },
       ICreateDatasetPayload
     >({
       query: (body) => ({
@@ -54,8 +56,8 @@ export const datasetsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Dataset'],
       transformResponse: (
         response:
-          | { dataset: IDatasetListItem; version: unknown }
-          | { data: { dataset: IDatasetListItem; version: unknown } },
+          | { dataset: IDatasetListItem; version: IDatasetDraftVersion }
+          | { data: { dataset: IDatasetListItem; version: IDatasetDraftVersion } },
       ) => unwrapResponse(response),
     }),
     deleteDataset: builder.mutation<void, string>({
@@ -65,6 +67,16 @@ export const datasetsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Dataset', 'Analysis'],
     }),
+    updateDatasetDraft: builder.mutation<IDatasetDraftVersion, IUpdateDatasetDraftPayload>({
+      query: ({ datasetId, versionId, ...body }) => ({
+        url: apiRoutes.datasets.draft(datasetId, versionId),
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Dataset'],
+      transformResponse: (response: IDatasetDraftVersion | { data: IDatasetDraftVersion }) =>
+        unwrapResponse(response),
+    }),
   }),
 });
 
@@ -73,5 +85,6 @@ export const {
   useDeleteDatasetMutation,
   useGetDatasetByIdQuery,
   useGetDatasetsListQuery,
+  useUpdateDatasetDraftMutation,
   useUploadDatasetPreviewMutation,
 } = datasetsApi;

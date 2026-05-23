@@ -10,6 +10,7 @@ import {
   getNextDatasetVersionNumber,
   listDatasetsByUser,
   listDatasetVersions,
+  updateDatasetVersionDraft,
 } from './dataset.repository.js';
 import type { DatasetColumnMapping, IDatasetVersionRecord } from './dataset.types.js';
 
@@ -28,6 +29,25 @@ function toDatasetVersionView(version: IDatasetVersionRecord | null) {
     rowCount: version.rowCount,
     createdAt: version.createdAt,
     completedAt: version.completedAt,
+  };
+}
+
+function toDatasetVersionDraftView(version: IDatasetVersionRecord | null) {
+  if (!version) {
+    return null;
+  }
+
+  const uploadSession = version.uploadSessionId
+    ? findUploadSessionById(version.uploadSessionId)
+    : null;
+
+  return {
+    ...toDatasetVersionView(version),
+    mappingConfig: version.mappingConfig,
+    editPatch: version.editPatch,
+    previewRows: uploadSession?.previewRows ?? [],
+    inferredColumns: uploadSession?.inferredColumns ?? [],
+    autoMapping: uploadSession?.autoMapping ?? {},
   };
 }
 
@@ -61,6 +81,7 @@ export function getUserDatasetDetails(datasetId: string, userId: string) {
 
   return {
     ...dataset,
+    currentVersion: toDatasetVersionDraftView(findDatasetCurrentVersion(datasetId)),
     versions: listDatasetVersions(datasetId).map(toDatasetVersionView),
   };
 }
@@ -85,8 +106,13 @@ export function createUserDataset(input: {
   markUploadSessionMapped(uploadSession.id);
 
   return {
-    dataset: result.dataset,
-    version: result.version,
+    dataset: result.dataset
+      ? {
+          ...result.dataset,
+          currentVersion: toDatasetVersionView(result.version),
+        }
+      : null,
+    version: toDatasetVersionDraftView(result.version),
   };
 }
 
@@ -116,7 +142,7 @@ export function createUserDatasetVersion(input: {
 
   markUploadSessionMapped(uploadSession.id);
 
-  return version;
+  return toDatasetVersionDraftView(version);
 }
 
 export function deleteUserDataset(datasetId: string, userId: string) {
@@ -143,4 +169,32 @@ export function getUserDatasetDownload(datasetId: string, userId: string) {
   }
 
   return version;
+}
+
+export function updateUserDatasetDraft(input: {
+  userId: string;
+  datasetId: string;
+  datasetVersionId: string;
+  mapping: DatasetColumnMapping;
+  editPatch: Record<string, unknown> | null;
+}) {
+  const dataset = findDatasetById(input.datasetId);
+
+  if (!dataset || dataset.userId !== input.userId) {
+    throw new AppError('Датасет не найден', 404);
+  }
+
+  const version = findDatasetVersionById(input.datasetVersionId);
+
+  if (!version || version.datasetId !== dataset.id || version.userId !== input.userId) {
+    throw new AppError('Версия датасета не найдена', 404);
+  }
+
+  return toDatasetVersionDraftView(
+    updateDatasetVersionDraft({
+      datasetVersionId: version.id,
+      mappingConfig: input.mapping,
+      editPatch: input.editPatch,
+    }),
+  );
 }

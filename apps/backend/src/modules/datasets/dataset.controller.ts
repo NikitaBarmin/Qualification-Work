@@ -1,7 +1,11 @@
 import type { RequestHandler } from 'express';
 
 import { getAuthenticatedUser } from '../../middleware/require-session.js';
-import { createDatasetSchema, createDatasetVersionSchema } from './dataset.schemas.js';
+import {
+  createDatasetSchema,
+  createDatasetVersionSchema,
+  updateDatasetDraftSchema,
+} from './dataset.schemas.js';
 import {
   createUserDataset,
   createUserDatasetVersion,
@@ -9,6 +13,7 @@ import {
   getUserDatasetDetails,
   getUserDatasetDownload,
   listUserDatasets,
+  updateUserDatasetDraft,
 } from './dataset.service.js';
 
 function getRouteParam(value: string | string[] | undefined): string {
@@ -77,6 +82,25 @@ export const createDatasetVersionController: RequestHandler = (request, response
         datasetId: getRouteParam(request.params.datasetId),
         uploadId: payload.uploadId,
         mapping: payload.mapping,
+      }),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateDatasetDraftController: RequestHandler = (request, response, next) => {
+  try {
+    const user = getAuthenticatedUser(request);
+    const payload = updateDatasetDraftSchema.parse(request.body);
+
+    response.status(200).json({
+      data: updateUserDatasetDraft({
+        userId: user.id,
+        datasetId: getRouteParam(request.params.datasetId),
+        datasetVersionId: getRouteParam(request.params.versionId),
+        mapping: payload.mapping,
+        editPatch: payload.editPatch,
       }),
     });
   } catch (error) {
