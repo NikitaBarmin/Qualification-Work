@@ -24,7 +24,9 @@ Thumbs.db
 docs/
 notes/
 forCodex/
+AGENTS.md
 apps/backend/docs/
 apps/backend/storage/
+DATABASE*.md
 
 .husky/_/
