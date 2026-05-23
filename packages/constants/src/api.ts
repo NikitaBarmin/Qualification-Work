@@ -8,14 +8,16 @@ export const API_ROUTES = {
     logout: `${API_PREFIX}/auth/logout`,
     me: `${API_PREFIX}/auth/me`,
   },
+  uploads: {
+    preview: `${API_PREFIX}/uploads/preview`,
+  },
   datasets: {
     list: `${API_PREFIX}/datasets`,
-    preview: `${API_PREFIX}/datasets/preview`,
-    upload: `${API_PREFIX}/datasets/upload`,
+    byId: (datasetId: string) => `${API_PREFIX}/datasets/${datasetId}`,
+    versions: (datasetId: string) => `${API_PREFIX}/datasets/${datasetId}/versions`,
   },
   analyses: {
     list: `${API_PREFIX}/analyses`,
     byId: (analysisId: string) => `${API_PREFIX}/analyses/${analysisId}`,
-    run: `${API_PREFIX}/analyses/run`,
   },
 } as const;

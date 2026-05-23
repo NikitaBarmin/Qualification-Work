@@ -7,7 +7,9 @@ const requiredDirectories = [
   paths.sqliteRoot,
   paths.uploadsRoot,
   paths.tempUploadsRoot,
+  paths.datasetOriginalsRoot,
   paths.cleanedDatasetsRoot,
+  paths.datasetArtifactsRoot,
 ];
 
 export function ensureStorageStructure() {
