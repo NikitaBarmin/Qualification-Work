@@ -363,3 +363,38 @@ export function updateDatasetVersionDraft(input: {
 
   return updatedVersion;
 }
+
+export function updateDatasetVersionStatus(input: {
+  datasetVersionId: string;
+  status: DatasetVersionStatus;
+  dataQuality?: Record<string, unknown> | null;
+}): IDatasetVersionRecord {
+  getSqliteClient()
+    .prepare(
+      `
+        UPDATE dataset_versions
+        SET
+          status = ?,
+          data_quality_json = COALESCE(?, data_quality_json),
+          completed_at = CASE
+            WHEN ? IN ('ready', 'failed') THEN CURRENT_TIMESTAMP
+            ELSE completed_at
+          END
+        WHERE id = ?
+      `,
+    )
+    .run(
+      input.status,
+      input.dataQuality ? JSON.stringify(input.dataQuality) : null,
+      input.status,
+      input.datasetVersionId,
+    );
+
+  const updatedVersion = findDatasetVersionById(input.datasetVersionId);
+
+  if (!updatedVersion) {
+    throw new Error('Updated dataset version was not found');
+  }
+
+  return updatedVersion;
+}

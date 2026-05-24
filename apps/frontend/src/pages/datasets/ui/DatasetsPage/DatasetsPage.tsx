@@ -117,6 +117,11 @@ export function DatasetsPage() {
   );
 
   const openDataset = (dataset: IDatasetListItem) => {
+    if (dataset.latestAnalysis) {
+      navigate(`/analytics/${dataset.latestAnalysis.id}`);
+      return;
+    }
+
     const params = new URLSearchParams({ datasetId: dataset.id });
 
     if (dataset.currentVersionId) {
@@ -211,7 +216,11 @@ export function DatasetsPage() {
         const status = dataset.currentVersion?.status ?? 'draft';
         const view = STATUS_VIEW[status];
 
-        return <Tag color={view.color}>{view.label}</Tag>;
+        return (
+          <Tag color={dataset.latestAnalysis ? 'green' : view.color}>
+            {dataset.latestAnalysis ? 'Проанализирован' : view.label}
+          </Tag>
+        );
       },
     },
     {

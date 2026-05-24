@@ -119,6 +119,95 @@ export function createAnalysis(input: {
   return createdAnalysis;
 }
 
+export function updateAnalysisStatus(input: {
+  analysisId: string;
+  status: AnalysisStatus;
+  errorMessage?: string | null;
+}): IAnalysisRecord {
+  getSqliteClient()
+    .prepare(
+      `
+        UPDATE analyses
+        SET
+          status = ?,
+          error_message = ?,
+          completed_at = CASE
+            WHEN ? IN ('completed', 'partial_success', 'failed') THEN CURRENT_TIMESTAMP
+            ELSE completed_at
+          END
+        WHERE id = ?
+      `,
+    )
+    .run(input.status, input.errorMessage ?? null, input.status, input.analysisId);
+
+  const updatedAnalysis = findAnalysisById(input.analysisId);
+
+  if (!updatedAnalysis) {
+    throw new Error('Updated analysis was not found');
+  }
+
+  return updatedAnalysis;
+}
+
+export function saveAnalysisSnapshot(input: {
+  analysisId: string;
+  status: AnalysisStatus;
+  dataQuality: unknown;
+  kpiMetrics: unknown;
+  chartsData: unknown;
+  diagnostics: unknown;
+  segments: unknown;
+  cohorts: unknown;
+  anomalies: unknown;
+  tradeoffs: unknown;
+  swotResults: unknown;
+  recommendations: unknown;
+}): IAnalysisRecord {
+  getSqliteClient()
+    .prepare(
+      `
+        UPDATE analyses
+        SET
+          status = ?,
+          data_quality_json = ?,
+          kpi_metrics_json = ?,
+          charts_data_json = ?,
+          diagnostics_json = ?,
+          segments_json = ?,
+          cohorts_json = ?,
+          anomalies_json = ?,
+          tradeoffs_json = ?,
+          swot_results_json = ?,
+          ai_recommendations_json = ?,
+          error_message = NULL,
+          completed_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+      `,
+    )
+    .run(
+      input.status,
+      JSON.stringify(input.dataQuality),
+      JSON.stringify(input.kpiMetrics),
+      JSON.stringify(input.chartsData),
+      JSON.stringify(input.diagnostics),
+      JSON.stringify(input.segments),
+      JSON.stringify(input.cohorts),
+      JSON.stringify(input.anomalies),
+      JSON.stringify(input.tradeoffs),
+      JSON.stringify(input.swotResults),
+      JSON.stringify(input.recommendations),
+      input.analysisId,
+    );
+
+  const updatedAnalysis = findAnalysisById(input.analysisId);
+
+  if (!updatedAnalysis) {
+    throw new Error('Updated analysis was not found');
+  }
+
+  return updatedAnalysis;
+}
+
 export function findAnalysisById(analysisId: string): IAnalysisRecord | null {
   const row = getSqliteClient()
     .prepare(
@@ -184,6 +273,44 @@ export function listAnalysesByUser(userId: string): IAnalysisRecord[] {
     .all(userId) as IAnalysisRow[];
 
   return rows.map(mapAnalysis);
+}
+
+export function findLatestAnalysisByDatasetVersionId(
+  datasetVersionId: string,
+): IAnalysisRecord | null {
+  const row = getSqliteClient()
+    .prepare(
+      `
+        SELECT
+          id,
+          dataset_id,
+          dataset_version_id,
+          user_id,
+          status,
+          data_quality_json,
+          kpi_metrics_json,
+          charts_data_json,
+          diagnostics_json,
+          segments_json,
+          cohorts_json,
+          anomalies_json,
+          tradeoffs_json,
+          swot_results_json,
+          ai_recommendations_json,
+          error_message,
+          started_at,
+          completed_at,
+          created_at
+        FROM analyses
+        WHERE dataset_version_id = ?
+          AND status IN ('completed', 'partial_success')
+        ORDER BY created_at DESC
+        LIMIT 1
+      `,
+    )
+    .get(datasetVersionId) as IAnalysisRow | undefined;
+
+  return row ? mapAnalysis(row) : null;
 }
 
 export function createAnalysisEvent(input: {

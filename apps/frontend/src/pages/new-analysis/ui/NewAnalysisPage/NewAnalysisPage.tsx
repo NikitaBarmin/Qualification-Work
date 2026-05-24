@@ -550,8 +550,9 @@ export function NewAnalysisPage() {
     }
 
     try {
-      await createAnalysis({ datasetVersionId: draft.versionId }).unwrap();
-      messageApi.success('Анализ поставлен в очередь. Следующим шагом подключим расчет метрик.');
+      const analysis = await createAnalysis({ datasetVersionId: draft.versionId }).unwrap();
+      messageApi.success('Аналитический дашборд готов');
+      navigate(`/analytics/${analysis.id}`);
     } catch (error) {
       messageApi.error(getApiErrorMessage(error, 'Не удалось запустить анализ'));
     }

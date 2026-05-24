@@ -1,4 +1,5 @@
 import { AppError } from '../../lib/app-error.js';
+import { findLatestAnalysisByDatasetVersionId } from '../analyses/analysis.repository.js';
 import { findUploadSessionById, markUploadSessionMapped } from '../uploads/upload.repository.js';
 import {
   createDatasetVersion,
@@ -29,6 +30,27 @@ function toDatasetVersionView(version: IDatasetVersionRecord | null) {
     rowCount: version.rowCount,
     createdAt: version.createdAt,
     completedAt: version.completedAt,
+  };
+}
+
+function toDatasetLatestAnalysisView(version: IDatasetVersionRecord | null) {
+  if (!version) {
+    return null;
+  }
+
+  const analysis = findLatestAnalysisByDatasetVersionId(version.id);
+
+  if (!analysis) {
+    return null;
+  }
+
+  return {
+    id: analysis.id,
+    datasetId: analysis.datasetId,
+    datasetVersionId: analysis.datasetVersionId,
+    status: analysis.status,
+    createdAt: analysis.createdAt,
+    completedAt: analysis.completedAt,
   };
 }
 
@@ -66,10 +88,15 @@ function ensureUploadSessionForUser(uploadId: string, userId: string) {
 }
 
 export function listUserDatasets(userId: string) {
-  return listDatasetsByUser(userId).map((dataset) => ({
-    ...dataset,
-    currentVersion: toDatasetVersionView(findDatasetCurrentVersion(dataset.id)),
-  }));
+  return listDatasetsByUser(userId).map((dataset) => {
+    const currentVersion = findDatasetCurrentVersion(dataset.id);
+
+    return {
+      ...dataset,
+      currentVersion: toDatasetVersionView(currentVersion),
+      latestAnalysis: toDatasetLatestAnalysisView(currentVersion),
+    };
+  });
 }
 
 export function getUserDatasetDetails(datasetId: string, userId: string) {
@@ -79,9 +106,12 @@ export function getUserDatasetDetails(datasetId: string, userId: string) {
     throw new AppError('Датасет не найден', 404);
   }
 
+  const currentVersion = findDatasetCurrentVersion(datasetId);
+
   return {
     ...dataset,
-    currentVersion: toDatasetVersionDraftView(findDatasetCurrentVersion(datasetId)),
+    currentVersion: toDatasetVersionDraftView(currentVersion),
+    latestAnalysis: toDatasetLatestAnalysisView(currentVersion),
     versions: listDatasetVersions(datasetId).map(toDatasetVersionView),
   };
 }
@@ -110,6 +140,7 @@ export function createUserDataset(input: {
       ? {
           ...result.dataset,
           currentVersion: toDatasetVersionView(result.version),
+          latestAnalysis: null,
         }
       : null,
     version: toDatasetVersionDraftView(result.version),

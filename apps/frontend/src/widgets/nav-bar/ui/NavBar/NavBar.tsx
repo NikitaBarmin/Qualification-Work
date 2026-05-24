@@ -61,6 +61,17 @@ const NESTED_NAV_ITEMS = NAV_ITEMS.filter((item) => item.path !== '/').sort(
   (left, right) => right.path.length - left.path.length,
 );
 
+function isNavItemActive(item: INavItem, pathname: string, navLinkIsActive: boolean) {
+  if (item.path === '/analytics') {
+    return (
+      pathname === '/analytics' ||
+      (pathname.startsWith('/analytics/') && pathname !== '/analytics/new')
+    );
+  }
+
+  return navLinkIsActive;
+}
+
 function getPageTitle(pathname: string) {
   const exactMatch = PAGE_TITLE_BY_PATH.get(pathname);
 
@@ -78,11 +89,15 @@ interface INavBarLinkProps {
 }
 
 const NavBarLink = memo(function NavBarLink({ item }: INavBarLinkProps) {
+  const { pathname } = useLocation();
+
   return (
     <NavLink
       to={item.path}
       end={item.end}
-      className={({ isActive }) => classNames(styles.link, isActive && styles.linkActive)}
+      className={({ isActive }) =>
+        classNames(styles.link, isNavItemActive(item, pathname, isActive) && styles.linkActive)
+      }
     >
       <img className={styles.icon} src={item.icon} alt="" aria-hidden="true" />
       <span>{item.label}</span>

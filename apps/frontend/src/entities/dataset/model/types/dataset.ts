@@ -56,6 +56,15 @@ export interface IDatasetVersion {
   completedAt: string | null;
 }
 
+export interface IDatasetLatestAnalysis {
+  id: string;
+  datasetId: string;
+  datasetVersionId: string;
+  status: 'completed' | 'partial_success';
+  createdAt: string;
+  completedAt: string | null;
+}
+
 export interface IDatasetEditPatch {
   updatedRows: Array<{
     rowIndex: number;
@@ -78,6 +87,7 @@ export interface IDatasetListItem {
   name: string;
   currentVersionId: string | null;
   currentVersion: IDatasetVersion | null;
+  latestAnalysis: IDatasetLatestAnalysis | null;
   createdAt: string;
   updatedAt: string;
 }

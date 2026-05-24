@@ -1,10 +1,18 @@
 import { AppError } from '../../lib/app-error.js';
-import { findDatasetById, findDatasetVersionById } from '../datasets/dataset.repository.js';
+import {
+  findDatasetById,
+  findDatasetVersionById,
+  updateDatasetVersionStatus,
+} from '../datasets/dataset.repository.js';
+import { buildAnalysisSnapshot } from './analysis.pipeline.js';
 import {
   createAnalysis,
+  createAnalysisEvent,
   findAnalysisById,
   listAnalysesByUser,
   listAnalysisEvents,
+  saveAnalysisSnapshot,
+  updateAnalysisStatus,
 } from './analysis.repository.js';
 
 export function listUserAnalyses(userId: string) {
@@ -24,7 +32,7 @@ export function getUserAnalysisDetails(analysisId: string, userId: string) {
   };
 }
 
-export function createUserAnalysis(input: { userId: string; datasetVersionId: string }) {
+export async function createUserAnalysis(input: { userId: string; datasetVersionId: string }) {
   const datasetVersion = findDatasetVersionById(input.datasetVersionId);
 
   if (!datasetVersion || datasetVersion.userId !== input.userId) {
@@ -37,9 +45,73 @@ export function createUserAnalysis(input: { userId: string; datasetVersionId: st
     throw new AppError('Датасет не найден', 404);
   }
 
-  return createAnalysis({
+  const analysis = createAnalysis({
     userId: input.userId,
     datasetId: dataset.id,
     datasetVersionId: datasetVersion.id,
   });
+
+  try {
+    updateDatasetVersionStatus({
+      datasetVersionId: datasetVersion.id,
+      status: 'processing',
+    });
+    updateAnalysisStatus({
+      analysisId: analysis.id,
+      status: 'processing',
+    });
+    createAnalysisEvent({
+      analysisId: analysis.id,
+      level: 'info',
+      stage: 'etl',
+      message: 'ETL and analytics pipeline started',
+    });
+
+    const snapshot = await buildAnalysisSnapshot(datasetVersion);
+
+    createAnalysisEvent({
+      analysisId: analysis.id,
+      level: snapshot.status === 'partial_success' ? 'warning' : 'info',
+      stage: 'diagnostics',
+      message: 'Rule-based diagnostics and recommendations generated',
+      payload: {
+        status: snapshot.status,
+        acceptedRows: snapshot.dataQuality.acceptedRows,
+        warnings: snapshot.dataQuality.warnings,
+      },
+    });
+
+    const completedAnalysis = saveAnalysisSnapshot({
+      analysisId: analysis.id,
+      ...snapshot,
+    });
+
+    updateDatasetVersionStatus({
+      datasetVersionId: datasetVersion.id,
+      status: 'ready',
+      dataQuality: snapshot.dataQuality,
+    });
+
+    return completedAnalysis;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown analysis error';
+
+    createAnalysisEvent({
+      analysisId: analysis.id,
+      level: 'error',
+      stage: 'snapshot',
+      message,
+    });
+
+    updateDatasetVersionStatus({
+      datasetVersionId: datasetVersion.id,
+      status: 'failed',
+    });
+
+    return updateAnalysisStatus({
+      analysisId: analysis.id,
+      status: 'failed',
+      errorMessage: message,
+    });
+  }
 }

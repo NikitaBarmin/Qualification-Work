@@ -22,13 +22,13 @@ export const listAnalysesController: RequestHandler = (request, response, next) 
   }
 };
 
-export const createAnalysisController: RequestHandler = (request, response, next) => {
+export const createAnalysisController: RequestHandler = async (request, response, next) => {
   try {
     const user = getAuthenticatedUser(request);
     const payload = createAnalysisSchema.parse(request.body);
 
     response.status(201).json({
-      data: createUserAnalysis({
+      data: await createUserAnalysis({
         userId: user.id,
         datasetVersionId: payload.datasetVersionId,
       }),
