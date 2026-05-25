@@ -237,6 +237,10 @@ function getSparkValues(key: keyof IAnalysisAggregate, dateSeries: IAnalysisDate
 function getRecommendationImpact(recommendation: IAnalysisRecommendation) {
   const evidence = recommendation.evidence;
 
+  if (typeof evidence.expectedImpact === 'string' && evidence.expectedImpact.trim()) {
+    return evidence.expectedImpact;
+  }
+
   if (recommendation.category === 'growth' && typeof evidence.roas === 'number') {
     return `+${formatNumber(evidence.roas)}x`;
   }
@@ -390,6 +394,8 @@ export function AnalyticsPage() {
   const dateSeries = analysis.chartsData?.dateSeries ?? [];
   const channelSeries = analysis.chartsData?.channelSeries ?? [];
   const recommendations = analysis.aiRecommendations?.items ?? [];
+  const recommendationsSource = analysis.aiRecommendations?.generatedBy ?? 'rule_based_engine_v1';
+  const isAiRecommendations = recommendationsSource.startsWith('llm:');
   const dataQuality = analysis.dataQuality;
   const topChannels = getChannelTableRows(channelSeries);
   const acceptanceRate = dataQuality?.totalRows
@@ -420,8 +426,10 @@ export function AnalyticsPage() {
           <span>Executive dashboard</span>
           <h1>Аналитика бизнеса</h1>
           <p>
-            Snapshot построен на основе загруженного датасета, маппинга, ручных правок и rule-based
-            диагностического ядра.
+            Snapshot построен на основе загруженного датасета, маппинга, ручных правок и{' '}
+            {isAiRecommendations
+              ? 'AI-интерпретации диагностического ядра.'
+              : 'rule-based диагностического ядра.'}
           </p>
         </div>
         <div className={styles.headerActions} data-html2canvas-ignore="true">
@@ -647,7 +655,11 @@ export function AnalyticsPage() {
         <div className={styles.recommendationsPanel}>
           <div className={styles.panelTitle}>
             <h2>Рекомендации</h2>
-            <p>Пока без AI API: рекомендации построены правилами поверх рассчитанных метрик.</p>
+            <p>
+              {isAiRecommendations
+                ? 'AI-рекомендации сформированы на основе рассчитанных метрик и диагностического слоя.'
+                : 'Fallback-режим: рекомендации построены правилами поверх рассчитанных метрик.'}
+            </p>
           </div>
           <div className={styles.recommendations}>
             {recommendations.length > 0 ? (

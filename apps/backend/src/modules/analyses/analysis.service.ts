@@ -4,6 +4,7 @@ import {
   findDatasetVersionById,
   updateDatasetVersionStatus,
 } from '../datasets/dataset.repository.js';
+import { enhanceAnalysisSnapshotWithAi } from './analysis.ai.js';
 import { buildAnalysisSnapshot } from './analysis.pipeline.js';
 import {
   createAnalysis,
@@ -81,15 +82,25 @@ export async function createUserAnalysis(input: { userId: string; datasetVersion
       },
     });
 
+    const aiEnhancement = await enhanceAnalysisSnapshotWithAi(snapshot);
+
+    createAnalysisEvent({
+      analysisId: analysis.id,
+      level: aiEnhancement.status === 'applied' ? 'info' : 'warning',
+      stage: 'ai',
+      message: aiEnhancement.message,
+      payload: aiEnhancement.payload ?? null,
+    });
+
     const completedAnalysis = saveAnalysisSnapshot({
       analysisId: analysis.id,
-      ...snapshot,
+      ...aiEnhancement.snapshot,
     });
 
     updateDatasetVersionStatus({
       datasetVersionId: datasetVersion.id,
       status: 'ready',
-      dataQuality: snapshot.dataQuality,
+      dataQuality: aiEnhancement.snapshot.dataQuality,
     });
 
     return completedAnalysis;
