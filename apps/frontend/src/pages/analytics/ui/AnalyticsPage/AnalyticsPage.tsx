@@ -29,6 +29,7 @@ import type {
   IAnalysisChannelPoint,
   IAnalysisDatePoint,
   IAnalysisRecommendation,
+  ISwotResults,
 } from '@/entities/analysis/model/types/analysis';
 import { getApiErrorMessage } from '@/shared/api';
 
@@ -204,6 +205,12 @@ function localizeSwotText(value: string) {
   };
 
   return dictionary[value] ?? value;
+}
+
+function getSwotItems(swot: ISwotResults | null | undefined, key: keyof ISwotResults) {
+  const items = swot?.[key] ?? [];
+
+  return items.length > 0 ? items : ['Недостаточно данных'];
 }
 
 function calculateRelativeChange(current: number, previous: number) {
@@ -643,7 +650,7 @@ export function AnalyticsPage() {
                   <h3>{item.title}</h3>
                 </div>
                 <ul>
-                  {(analysis.swotResults?.[item.key] ?? ['Недостаточно данных']).map((value) => (
+                  {getSwotItems(analysis.swotResults, item.key).map((value) => (
                     <li key={value}>{localizeSwotText(value)}</li>
                   ))}
                 </ul>

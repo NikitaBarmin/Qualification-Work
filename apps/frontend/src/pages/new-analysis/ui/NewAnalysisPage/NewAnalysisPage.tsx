@@ -6,6 +6,7 @@ import {
   Input,
   message,
   Modal,
+  Progress,
   Select,
   Spin,
   Table,
@@ -70,6 +71,16 @@ interface IPersistedNewAnalysisDraft {
 }
 
 const ACTIVE_DRAFT_STORAGE_KEY = 'businesspulse:new-analysis:draft:v1';
+
+const ANALYSIS_PROGRESS_DURATION_MS = 30_000;
+const ANALYSIS_PROGRESS_STAGES = [
+  { percent: 8, label: 'Сохраняем правки датасета' },
+  { percent: 22, label: 'Запускаем ETL и очистку данных' },
+  { percent: 42, label: 'Считаем KPI и канальную диагностику' },
+  { percent: 62, label: 'Ищем аномалии и стратегические сигналы' },
+  { percent: 78, label: 'Формируем AI-рекомендации и SWOT' },
+  { percent: 92, label: 'Собираем финальный дашборд' },
+];
 
 const REQUIRED_COLUMNS: IRequiredColumn[] = [
   { key: 'date', label: 'Дата', type: 'date' },
@@ -235,6 +246,7 @@ export function NewAnalysisPage() {
   const sessionStatus = useAppSelector((state) => state.session.status);
   const [messageApi, contextHolder] = message.useMessage();
   const tablePanelRef = useRef<HTMLDivElement | null>(null);
+  const analysisTimerRef = useRef<number | null>(null);
   const persistedDraftRef = useRef<IPersistedNewAnalysisDraft | null>(
     datasetIdFromUrl ? null : readPersistedDraft(),
   );
@@ -248,6 +260,10 @@ export function NewAnalysisPage() {
     () => persistedDraftRef.current?.deletedRows ?? [],
   );
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [analysisProgress, setAnalysisProgress] = useState<{
+    percent: number;
+    label: string;
+  } | null>(null);
   const [uploadDatasetPreview, uploadState] = useUploadDatasetPreviewMutation();
   const [createDataset, createDatasetState] = useCreateDatasetMutation();
   const [updateDatasetDraft, updateDraftState] = useUpdateDatasetDraftMutation();
@@ -262,6 +278,58 @@ export function NewAnalysisPage() {
     createDatasetState.isLoading ||
     updateDraftState.isLoading ||
     createAnalysisState.isLoading;
+
+  const clearAnalysisProgressTimer = () => {
+    if (analysisTimerRef.current === null) {
+      return;
+    }
+
+    window.clearInterval(analysisTimerRef.current);
+    analysisTimerRef.current = null;
+  };
+
+  const startAnalysisProgress = () => {
+    clearAnalysisProgressTimer();
+    const startedAt = Date.now();
+    const firstStage = ANALYSIS_PROGRESS_STAGES[0];
+
+    setAnalysisProgress(firstStage);
+    analysisTimerRef.current = window.setInterval(() => {
+      const elapsed = Date.now() - startedAt;
+      const targetPercent = Math.min(
+        92,
+        Math.round(firstStage.percent + (elapsed / ANALYSIS_PROGRESS_DURATION_MS) * 84),
+      );
+      const stage =
+        [...ANALYSIS_PROGRESS_STAGES].reverse().find((item) => targetPercent >= item.percent) ??
+        firstStage;
+
+      setAnalysisProgress((current) => ({
+        percent: Math.max(current?.percent ?? 0, targetPercent),
+        label: stage.label,
+      }));
+    }, 700);
+  };
+
+  const finishAnalysisProgress = () => {
+    clearAnalysisProgressTimer();
+    setAnalysisProgress({
+      percent: 100,
+      label: 'Дашборд готов',
+    });
+  };
+
+  const resetAnalysisProgress = () => {
+    clearAnalysisProgressTimer();
+    setAnalysisProgress(null);
+  };
+
+  useEffect(
+    () => () => {
+      clearAnalysisProgressTimer();
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!datasetDetails?.currentVersion) {
@@ -543,22 +611,30 @@ export function NewAnalysisPage() {
       return;
     }
 
+    startAnalysisProgress();
     const savedVersion = await saveDraft();
 
     if (!savedVersion) {
+      resetAnalysisProgress();
       return;
     }
 
     try {
       const analysis = await createAnalysis({ datasetVersionId: draft.versionId }).unwrap();
+      finishAnalysisProgress();
       messageApi.success('Аналитический дашборд готов');
+      await new Promise((resolve) => {
+        window.setTimeout(resolve, 450);
+      });
       navigate(`/analytics/${analysis.id}`);
     } catch (error) {
+      resetAnalysisProgress();
       messageApi.error(getApiErrorMessage(error, 'Не удалось запустить анализ'));
     }
   };
 
   const resetToUpload = () => {
+    resetAnalysisProgress();
     persistDraftSnapshot(null);
     setDraft(null);
     setOriginalRows([]);
@@ -706,6 +782,27 @@ export function NewAnalysisPage() {
           </Button>
         </div>
       </div>
+
+      {analysisProgress && (
+        <div className={styles.analysisProgress}>
+          <div className={styles.analysisProgressHeader}>
+            <div>
+              <span>Статус анализа</span>
+              <h2>{analysisProgress.label}</h2>
+            </div>
+            <strong>{analysisProgress.percent}%</strong>
+          </div>
+          <Progress
+            percent={analysisProgress.percent}
+            showInfo={false}
+            status={analysisProgress.percent === 100 ? 'success' : 'active'}
+          />
+          <p>
+            Обычно анализ занимает 20-30 секунд: очищаем данные, считаем метрики, строим диагностику
+            и формируем рекомендации.
+          </p>
+        </div>
+      )}
 
       <div className={styles.statsGrid}>
         <div className={styles.statItem}>

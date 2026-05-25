@@ -125,6 +125,54 @@
   }
 }
 
+.analysisProgress {
+  margin-top: 18px;
+  padding: 22px 26px;
+  border: 1px solid rgb(47 51 52 / 6%);
+  border-radius: 8px;
+  background: $bg-header;
+  box-shadow: 0 16px 40px rgb(47 51 52 / 4%);
+
+  p {
+    margin: 12px 0 0;
+    color: $color-gray;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  :global(.ant-progress-line) {
+    margin-top: 14px;
+  }
+}
+
+.analysisProgressHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+
+  span {
+    color: $color-gray;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 6px 0 0;
+    font-family: $font-title;
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  strong {
+    color: $bg-buttons;
+    font-family: $font-title;
+    font-size: 28px;
+    line-height: 1;
+  }
+}
+
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
